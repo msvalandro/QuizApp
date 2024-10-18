@@ -1,5 +1,6 @@
 package com.msvalandro.quizapp
 
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -21,6 +22,8 @@ class QuestionsActivity : AppCompatActivity(), OnClickListener {
     private var stateCurrentPosition: Int = 1
     private var stateQuestionsList: ArrayList<Question>? = null
     private var stateSelectedOptionPosition: Int = 0
+    private var stateUserName: String? = null
+    private var stateCorrectAnswers: Int = 0
 
     private var progressBar: ProgressBar? = null
     private var textViewProgress: TextView? = null
@@ -44,6 +47,8 @@ class QuestionsActivity : AppCompatActivity(), OnClickListener {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        stateUserName = intent.getStringExtra(Constants.USER_NAME)
 
         progressBar = findViewById(R.id.progress_bar)
         textViewProgress = findViewById(R.id.text_view_progress)
@@ -164,7 +169,13 @@ class QuestionsActivity : AppCompatActivity(), OnClickListener {
                             setQuestion()
                         }
                         else -> {
-                            Toast.makeText(this, "You made it to the end", Toast.LENGTH_LONG).show()
+                            val intent = Intent(this, ResultActivity::class.java)
+                            intent.putExtra(Constants.USER_NAME, stateUserName)
+                            intent.putExtra(Constants.CORRECT_ANSWERS, stateCorrectAnswers)
+                            intent.putExtra(Constants.TOTAL_QUESTIONS, stateQuestionsList?.size)
+
+                            startActivity(intent)
+                            finish()
                         }
                     }
                 } else {
@@ -172,6 +183,8 @@ class QuestionsActivity : AppCompatActivity(), OnClickListener {
 
                     if (question!!.correctAnswer != stateSelectedOptionPosition) {
                         answerView(stateSelectedOptionPosition, R.drawable.wrong_option_border_bg)
+                    } else {
+                        stateCorrectAnswers++
                     }
 
                     answerView(question.correctAnswer, R.drawable.correct_option_border_bg)
