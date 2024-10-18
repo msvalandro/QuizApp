@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -71,6 +72,8 @@ class QuestionsActivity : AppCompatActivity(), OnClickListener {
         if (stateQuestionsList.isNullOrEmpty()) {
             return
         }
+
+        defaultOptionsView()
 
         val question = stateQuestionsList!![stateCurrentPosition - 1]
 
@@ -153,7 +156,63 @@ class QuestionsActivity : AppCompatActivity(), OnClickListener {
                 }
             }
             R.id.button_submit -> {
-//                TODO: implement button submit
+                if (stateSelectedOptionPosition == 0) {
+                    stateCurrentPosition++
+
+                    when {
+                        stateCurrentPosition <= stateQuestionsList!!.size -> {
+                            setQuestion()
+                        }
+                        else -> {
+                            Toast.makeText(this, "You made it to the end", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                } else {
+                    val question = stateQuestionsList?.get(stateCurrentPosition - 1)
+
+                    if (question!!.correctAnswer != stateSelectedOptionPosition) {
+                        answerView(stateSelectedOptionPosition, R.drawable.wrong_option_border_bg)
+                    }
+
+                    answerView(question.correctAnswer, R.drawable.correct_option_border_bg)
+
+                    if (stateCurrentPosition == stateQuestionsList!!.size) {
+                        buttonSubmit?.text = "FINISH"
+                    } else {
+                        buttonSubmit?.text = "NEXT"
+                    }
+
+                    stateSelectedOptionPosition = 0
+                }
+            }
+        }
+    }
+
+    private fun answerView(answer: Int, drawableView: Int) {
+        when (answer) {
+            1 -> {
+                textViewOptionOne?.background = ContextCompat.getDrawable(
+                    this,
+                    drawableView
+                )
+            }
+            2 -> {
+                textViewOptionTwo?.background = ContextCompat.getDrawable(
+                    this,
+                    drawableView
+                )
+            }
+            3 -> {
+                textViewOptionThree?.background = ContextCompat.getDrawable(
+                    this,
+                    drawableView
+                )
+            }
+            4 -> {
+                textViewOptionFour?.background = ContextCompat.getDrawable(
+                    this,
+                    drawableView
+                )
             }
         }
     }
